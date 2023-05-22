@@ -4,7 +4,7 @@ async function getTopArtists(access_token) {
     const time_range = "medium_term";
     
     fetch('https://api.spotify.com/v1/me/top/tracks?limit='+limit+'&offset='+offset+'&time_range='+time_range, {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + access_token
         }
