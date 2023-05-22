@@ -19,6 +19,5 @@ async function getTopArtists(access_token) {
         console.log(data.items)
     })
     .catch(error => {
-        logout();
     });
 }
