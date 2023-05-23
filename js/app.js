@@ -1,31 +1,34 @@
 async function getUserTop(access_token, type) {
-    const content_type = ["artists","tracks"].includes(type,0) ? type : null
-    const limit = 50;
-    const offset = 0;
-    const time_range = "medium_term";
+  const content_type = ["artists", "tracks"].includes(type) ? type : null;
+  const limit = 50;
+  const offset = 0;
+  const time_range = "medium_term";
 
-    if(!content_type){
-      return null
-    }
-    
-    fetch('https://api.spotify.com/v1/me/top/'+content_type+'?limit='+limit+'&offset='+offset+'&time_range='+time_range, {
-        method: 'GET',
+  if (!content_type) {
+    return null;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/me/top/${content_type}?limit=${limit}&offset=${offset}&time_range=${time_range}`,
+      {
+        method: "GET",
         headers: {
-            'Authorization': 'Bearer ' + access_token
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            logout();
-        }
-        return response.json();
-    })
-    .then(data=>{
-        const parsedArtists = parseArtists(data);
-        renderBubbleChart(parsedArtists);
-    })
-    .catch(error => {
-    });
+          Authorization: "Bearer " + access_token,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      logout();
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log("Error:", error);
+    return null;
+  }
 }
 
 function parseArtists(data) {
@@ -48,8 +51,33 @@ function parseArtists(data) {
     return results;
   }
 
-  function renderBubbleChart(data) {
-    const container = d3.select('#artists_chart');
+  function parseGenres(data) {
+    const artists = data.items;
+    const genreCounts = {};
+  
+    for (const artist of artists) {
+      const genres = artist.genres;
+      for (const genre of genres) {
+        if (genreCounts.hasOwnProperty(genre)) {
+          genreCounts[genre]++;
+        } else {
+          genreCounts[genre] = 1;
+        }
+      }
+    }
+  
+    const result = [];
+    for (const genre in genreCounts) {
+      if (genreCounts[genre] > 1) {
+        result.push({ name: genre, value: genreCounts[genre] });
+      }
+    }
+  
+    return result;
+  }
+
+  function renderBubbleChart(data, container_id) {
+    const container = d3.select(container_id);
     const width = container.node().getBoundingClientRect().width;
   
     const height = Math.min(800, window.innerHeight - container.node().getBoundingClientRect().top - 100);
@@ -120,4 +148,18 @@ function parseArtists(data) {
       const maxFontSize = (0.6 * (radius-3)) / Math.sqrt(2);  
       return maxFontSize + 'px';
     }
+  }
+
+  async function renderArtists() {
+    const token = sessionStorage.getItem('access_token');
+    const data = await getUserTop(token, 'tracks');
+    const parsedData = parseArtists(data);
+    renderBubbleChart(parsedData, '#artists_chart');
+  }
+
+  async function renderGenres() {
+    const token = sessionStorage.getItem('access_token');
+    const data = await getUserTop(token, 'artists');
+    const parsedData = parseGenres(data);
+    renderBubbleChart(parsedData, '#genres_chart');
   }
