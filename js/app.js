@@ -46,11 +46,16 @@ function parseArtists(data) {
   }
 
   function renderBubbleChart(data) {
-    const svg = d3.select('#artists_chart').append('svg').attr('width', 800).attr('height', 600);
+    const container = d3.select('#artists_chart'); // Select the Bootstrap row element
+    const width = container.node().getBoundingClientRect().width; // Get the width of the container
+  
+    const height = Math.min(1200, window.innerHeight - container.node().getBoundingClientRect().top - 20); // Set the height based on available space
+  
+    const svg = container.append('svg').attr('width', '100%').attr('height', height);
   
     const bubble = d3
       .pack(data)
-      .size([800, 600])
+      .size([width, height]) // Use the container's width and dynamic height
       .padding(1.5);
   
     const nodes = d3.hierarchy({ children: data }).sum((d) => d.value);
@@ -66,30 +71,36 @@ function parseArtists(data) {
   
     node
       .append('circle')
-      .attr('r', (d) => d.r)
-      .style('fill', () => getRandomColor());
+      .attr('r', 0) // Start with radius 0 for transition effect
+      .style('fill', () => getRandomColor())
+      .transition() // Apply the transition animation
+      .duration(600) // Set the duration of the transition
+      .delay(() => Math.random() * 400)
+      .attr('r', (d) => d.r); // Transition to the actual bubble radius
   
     node
       .append('text')
       .attr('dy', '.3em')
       .style('text-anchor', 'middle')
       .style('fill', 'white')
+      .style('opacity', '0')
       .style('font-size', (d) => getBubbleTextSize(d.r))
-      .text((d) => d.data.name);
-      
-  }
-
-  function getRandomColor() {
-    const colors = ["#363b74","#673888","#ef4f91","#c79dd7","#4d1b7b"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-
-  function getBubbleTextSize(radius) {
-    // Adjust this padding value to control the amount of padding within the bubble
-    const padding = 1;
+      .text((d) => d.data.name)
+      .transition() // Apply the transition animation
+      .duration(500) // Set the duration of the transition
+      .delay(1000)
+      .style('opacity', '1')
   
-    // Calculate the maximum font size that fits within the bubble with padding
-    const maxFontSize = (0.5 * (radius - padding)) / Math.sqrt(2);
+    function getRandomColor() {
+      const colors = ["#363b74","#673888","#ef4f91","#c79dd7","#4d1b7b"];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
   
-    return maxFontSize + 'px';
+    function getBubbleTextSize(radius) {
+      const padding = 2;
+      const maxFontSize = (0.5 * (radius - padding)) / Math.sqrt(2);
+  
+      return maxFontSize + 'px';
+    }
   }
+  
