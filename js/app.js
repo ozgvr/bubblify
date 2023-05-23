@@ -45,18 +45,18 @@ function parseArtists(data) {
     return results;
   }
 
-  function renderBubbleChart(data) {
+function renderBubbleChart(data) {
     const container = d3.select('#artists_chart'); // Select the Bootstrap row element
     const width = container.node().getBoundingClientRect().width; // Get the width of the container
   
-    const height = Math.min(1200, window.innerHeight - container.node().getBoundingClientRect().top - 20); // Set the height based on available space
+    const height = Math.min(800, window.innerHeight - container.node().getBoundingClientRect().top - 100); // Set the height based on available space
   
     const svg = container.append('svg').attr('width', '100%').attr('height', height);
   
     const bubble = d3
       .pack(data)
-      .size([width, height]) // Use the container's width and dynamic height
-      .padding(1.5);
+      .size([width-20, height]) // Use the container's width and dynamic height
+      .padding(2);
   
     const nodes = d3.hierarchy({ children: data }).sum((d) => d.value);
   
@@ -69,10 +69,13 @@ function parseArtists(data) {
       .attr('class', 'node')
       .attr('transform', (d) => 'translate(' + d.x + ',' + d.y + ')');
   
+    const colors = ["#363b74","#673888","#ef4f91","#c79dd7","#4d1b7b"];
+    let colorIndex = 0;
+  
     node
       .append('circle')
       .attr('r', 0) // Start with radius 0 for transition effect
-      .style('fill', () => getRandomColor())
+      .style('fill', () => getNextColor())
       .transition() // Apply the transition animation
       .duration(600) // Set the duration of the transition
       .delay(() => Math.random() * 400)
@@ -85,15 +88,17 @@ function parseArtists(data) {
       .style('fill', 'white')
       .style('opacity', '0')
       .style('font-size', (d) => getBubbleTextSize(d.r))
+      .style('pointer-events', 'none') // Disable pointer events for the text elements
       .text((d) => d.data.name)
       .transition() // Apply the transition animation
       .duration(500) // Set the duration of the transition
       .delay(1000)
-      .style('opacity', '1')
+      .style('opacity', '1');
   
-    function getRandomColor() {
-      const colors = ["#363b74","#673888","#ef4f91","#c79dd7","#4d1b7b"];
-      return colors[Math.floor(Math.random() * colors.length)];
+    function getNextColor() {
+      const color = colors[colorIndex];
+      colorIndex = (colorIndex + 1) % colors.length; // Increment color index and wrap around
+      return color;
     }
   
     function getBubbleTextSize(radius) {
@@ -103,4 +108,3 @@ function parseArtists(data) {
       return maxFontSize + 'px';
     }
   }
-  
