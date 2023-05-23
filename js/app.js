@@ -1,9 +1,14 @@
-async function getTopArtists(access_token) {
+async function getUserTop(access_token, type) {
+    const content_type = ["artists","tracks"].includes(type,0) ? type : null
     const limit = 50;
     const offset = 0;
     const time_range = "medium_term";
+
+    if(!content_type){
+      return null
+    }
     
-    fetch('https://api.spotify.com/v1/me/top/artists?limit='+limit+'&offset='+offset+'&time_range='+time_range, {
+    fetch('https://api.spotify.com/v1/me/top/'+content_type+'?limit='+limit+'&offset='+offset+'&time_range='+time_range, {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + access_token
@@ -17,36 +22,7 @@ async function getTopArtists(access_token) {
     })
     .then(data=>{
         const parsedArtists = parseArtists(data);
-        console.log(parsedArtists)
         renderBubbleChart(parsedArtists);
-
-    })
-    .catch(error => {
-    });
-}
-
-async function getTopTracks(access_token) {
-    const limit = 50;
-    const offset = 0;
-    const time_range = "medium_term";
-    
-    fetch('https://api.spotify.com/v1/me/top/tracks?limit='+limit+'&offset='+offset+'&time_range='+time_range, {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + access_token
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            logout();
-        }
-        return response.json();
-    })
-    .then(data=>{
-        const parsedArtists = parseArtists(data);
-        console.log(parsedArtists)
-        renderBubbleChart(parsedArtists);
-
     })
     .catch(error => {
     });
@@ -72,17 +48,17 @@ function parseArtists(data) {
     return results;
   }
 
-function renderBubbleChart(data) {
-    const container = d3.select('#artists_chart'); // Select the Bootstrap row element
-    const width = container.node().getBoundingClientRect().width; // Get the width of the container
+  function renderBubbleChart(data) {
+    const container = d3.select('#artists_chart');
+    const width = container.node().getBoundingClientRect().width;
   
-    const height = Math.min(800, window.innerHeight - container.node().getBoundingClientRect().top - 100); // Set the height based on available space
+    const height = Math.min(800, window.innerHeight - container.node().getBoundingClientRect().top - 100);
   
     const svg = container.append('svg').attr('width', '100%').attr('height', height);
   
     const bubble = d3
       .pack(data)
-      .size([width-20, height]) // Use the container's width and dynamic height
+      .size([width - 20, height])
       .padding(2);
   
     const nodes = d3.hierarchy({ children: data }).sum((d) => d.value);
@@ -96,42 +72,52 @@ function renderBubbleChart(data) {
       .attr('class', 'node')
       .attr('transform', (d) => 'translate(' + d.x + ',' + d.y + ')');
   
-    const colors = ["#363b74","#673888","#ef4f91","#c79dd7","#4d1b7b"];
+    const colors = ["#363b74", "#673888", "#ef4f91", "#c79dd7", "#4d1b7b", "#005bb5"];
     let colorIndex = 0;
   
     node
       .append('circle')
-      .attr('r', 0) // Start with radius 0 for transition effect
+      .attr('r', 0)
       .style('fill', () => getNextColor())
-      .transition() // Apply the transition animation
-      .duration(600) // Set the duration of the transition
-      .delay(() => Math.random() * 400)
-      .attr('r', (d) => d.r); // Transition to the actual bubble radius
+      .transition()
+      .duration(800)
+      .delay(() => Math.random() * 1000)
+      .attr('r', (d) => d.r);
   
-    node
-      .append('text')
-      .attr('dy', '.3em')
-      .style('text-anchor', 'middle')
-      .style('fill', 'white')
+    const textContainer = node
+      .append('g')
+      .attr('transform', (d) => `translate(${-d.r},${-d.r})`);
+  
+      const foreignObject = textContainer
+      .append('foreignObject')
+      .style('overflow', 'visible')
+      .attr('width', (d) => 2 * d.r)
+      .attr('height', (d) => 2 * d.r)
+      .style('pointer-events', 'none');
+    
+    const div = foreignObject
+      .append('xhtml:div')
+      .style('width', (d) => 2 * d.r + 'px')
+      .attr('class', "h-100 text-white d-flex align-items-center justify-content-center");
+    
+    div
+      .append('a')
       .style('opacity', '0')
       .style('font-size', (d) => getBubbleTextSize(d.r))
-      .style('pointer-events', 'none') // Disable pointer events for the text elements
       .text((d) => d.data.name)
-      .transition() // Apply the transition animation
-      .duration(500) // Set the duration of the transition
-      .delay(1000)
+      .transition()
+      .duration(400)
+      .delay(1500)
       .style('opacity', '1');
-  
+    
     function getNextColor() {
       const color = colors[colorIndex];
-      colorIndex = (colorIndex + 1) % colors.length; // Increment color index and wrap around
+      colorIndex = (colorIndex + 1) % colors.length;
       return color;
     }
   
     function getBubbleTextSize(radius) {
-      const padding = 2;
-      const maxFontSize = (0.5 * (radius - padding)) / Math.sqrt(2);
-  
+      const maxFontSize = (0.6 * (radius-3)) / Math.sqrt(2);  
       return maxFontSize + 'px';
     }
   }
