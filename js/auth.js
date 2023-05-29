@@ -14,6 +14,7 @@ function handleCallback() {
     const url = window.location.href;
     const params = new URLSearchParams(url.split('#')[1]);
     const token = params.get('access_token');
+    console.log(url,params,token)
     if(token){
         sessionStorage.removeItem('access_token')
         sessionStorage.setItem('access_token',token)
