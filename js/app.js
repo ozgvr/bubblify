@@ -125,14 +125,16 @@ function parseGenres(data) {
   function renderBubbleChart(data, container_id) {
     const container = d3.select(container_id);
     const width = container.node().getBoundingClientRect().width;
-  
-    const height = Math.min(800, window.innerHeight-180);
-  
-    const svg = container.append('svg').attr('width', '100%').attr('height', height);
+    const height = Math.min(768, container.node().getBoundingClientRect().width);
+    
+    const svg = container
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', height);
   
     const bubble = d3
       .pack(data)
-      .size([width - 20, height])
+      .size([width, height])
       .padding(2);
   
     const nodes = d3.hierarchy({ children: data }).sum((d) => d.value);
@@ -151,7 +153,6 @@ function parseGenres(data) {
   
     node
       .append('circle')
-      .attr('r', 0)
       .style('fill', (d) => d.data.img ? getNextColor(false) : getNextColor())
       .attr('r', (d) => d.r);
   
@@ -164,6 +165,7 @@ function parseGenres(data) {
     .attr('width', (d) => 2 * d.r)
     .attr('height', (d) => 2 * d.r)
     .style('pointer-events', 'none')
+    .style('overflow','visible')
     .attr('class', (d) => d.data.img ? "image-bubble" : '')
     .style('background-color', (d) => d.data.img ? getNextColor() : "transparent")
     .style('background-image', (d) => d.data.img ? `url(${d.data.img})` : 'none')
@@ -176,7 +178,6 @@ function parseGenres(data) {
     
     div
       .append('a')
-      .style('opacity', '1')
       .style('font-size', (d) => getBubbleTextSize(d.r))
       .style('line-height', "1.1em")
       .text((d) => d.data.name.length > 20 ? d.data.name.slice(0,20) + "..." : d.data.name);
@@ -190,7 +191,7 @@ function parseGenres(data) {
       }
   
     function getBubbleTextSize(radius) {
-      const maxFontSize = (0.6 * (radius-4)) / Math.sqrt(2);  
+      const maxFontSize = (0.6 * (radius-3)) / Math.sqrt(2);  
       return maxFontSize + 'px';
     }
   }
