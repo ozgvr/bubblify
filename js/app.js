@@ -1,8 +1,8 @@
-async function getUserTop(access_token, type) {
+async function getUserTop(access_token, type, time_range) {
   const content_type = ["artists", "tracks"].includes(type) ? type : null;
   const limit = 50;
   const offset = 0;
-  const time_range = "medium_term";
+  const range = ["short_term","medium_term","long_term"][time_range];
 
   if (!content_type) {
     return null;
@@ -10,7 +10,7 @@ async function getUserTop(access_token, type) {
 
   try {
     const response = await fetch(
-      `https://api.spotify.com/v1/me/top/${content_type}?limit=${limit}&offset=${offset}&time_range=${time_range}`,
+      `https://api.spotify.com/v1/me/top/${content_type}?limit=${limit}&offset=${offset}&time_range=${range}`,
       {
         method: "GET",
         headers: {
@@ -106,18 +106,18 @@ function parseGenres(data) {
 
   
 
-  async function renderArtistsAlbums() {
+  async function renderArtistsAlbums(time_range=1) {
     const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'tracks');
+    const data = await getUserTop(token, 'tracks', time_range);
     const { artists, albums } = parseArtistsAlbums(data);
 
     renderBubbleChart(artists, '#artists_chart');
     renderBubbleChart(albums, '#albums_chart');
   }
 
-  async function renderGenres() {
+  async function renderGenres(time_range=1) {
     const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'artists');
+    const data = await getUserTop(token, 'artists', time_range);
     const parsedData = parseGenres(data);
     renderBubbleChart(parsedData, '#genres_chart');
   }
@@ -125,14 +125,16 @@ function parseGenres(data) {
   function renderBubbleChart(data, container_id) {
     const container = d3.select(container_id);
     const width = container.node().getBoundingClientRect().width;
-  
-    const height = Math.min(800, window.innerHeight);
-  
-    const svg = container.append('svg').attr('width', '100%').attr('height', height);
+    const height = Math.min(768, container.node().getBoundingClientRect().width);
+    
+    const svg = container
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', height);
   
     const bubble = d3
       .pack(data)
-      .size([width - 20, height])
+      .size([width, height])
       .padding(2);
   
     const nodes = d3.hierarchy({ children: data }).sum((d) => d.value);
@@ -151,7 +153,6 @@ function parseGenres(data) {
   
     node
       .append('circle')
-      .attr('r', 0)
       .style('fill', (d) => d.data.img ? getNextColor(false) : getNextColor())
       .attr('r', (d) => d.r);
   
@@ -164,6 +165,7 @@ function parseGenres(data) {
     .attr('width', (d) => 2 * d.r)
     .attr('height', (d) => 2 * d.r)
     .style('pointer-events', 'none')
+    .style('overflow','visible')
     .attr('class', (d) => d.data.img ? "image-bubble" : '')
     .style('background-color', (d) => d.data.img ? getNextColor() : "transparent")
     .style('background-image', (d) => d.data.img ? `url(${d.data.img})` : 'none')
@@ -176,8 +178,8 @@ function parseGenres(data) {
     
     div
       .append('a')
-      .style('opacity', '1')
       .style('font-size', (d) => getBubbleTextSize(d.r))
+      .style('line-height', "1.1em")
       .text((d) => d.data.name.length > 20 ? d.data.name.slice(0,20) + "..." : d.data.name);
 
       function getNextColor(increaseIndex = true) {
@@ -189,7 +191,7 @@ function parseGenres(data) {
       }
   
     function getBubbleTextSize(radius) {
-      const maxFontSize = (0.5 * (radius-3)) / Math.sqrt(2);  
+      const maxFontSize = (0.6 * (radius-3)) / Math.sqrt(2);  
       return maxFontSize + 'px';
     }
   }
