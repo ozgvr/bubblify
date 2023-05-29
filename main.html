@@ -11,21 +11,49 @@
       border-radius: 99999px;
       color: transparent!important;
     }
+    .row{
+      overflow:hidden;
+    }
+    .row-hidden{
+      height:0px;
+    }
+    .row-show{
+      height:100%;
+    }
   </style>
 </head>
 <body class="bg-transparent" onload="checkAuthorized()">
   <div class="container-fluid p-0">
     <div class="row justify-content-center w-100 m-0 p-0">
       <h1 class="display-3 text-white text-center mt-3 mb-0">Bubblify</h1>
-      <div class="row justify-content-center w-100 m-0 p-0">
+
+      <select class="form-select my-3" style="max-width:300px" data-bs-theme="dark">
+        <option value="1">Weekly</option>
+        <option selected="2">Monthly</option>
+        <option value="3">Yearly</option>
+      </select>
+      <ul class="nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link pill active" id="pills-artists" data-bs-toggle="pill">Artists</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link pill" id="pills-albums" data-bs-toggle="pill">Albums</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link pill" id="pills-genres" data-bs-toggle="pill">Genres</button>
+        </li>
+
+      </ul>
+
+      <div class="row justify-content-center w-100 m-0 p-0 row-hidden row-show" id="artists_container">
         <h2 class="display-6 fs-3 text-white text-center mb-0 p-0">Top Artists</h2>
         <div class="w-100 text-center mt-3 p-0" id="artists_chart"></div>
       </div>
-      <div class="row justify-content-center w-100 m-0 p-0">
+      <div class="row justify-content-center w-100 m-0 p-0 row-hidden" id="albums_container">
         <h2 class="display-6 fs-3 text-white text-center mb-0">Top Albums</h2>
         <div class="w-100 text-center mt-3 p-0" id="albums_chart"></div> 
       </div>
-      <div class="row justify-content-center w-100 m-0 p-0">
+      <div class="row justify-content-center w-100 m-0 p-0 row-hidden" id="genres_container">
         <h2 class="display-6 fs-3 text-white text-center mb-0">Top Genres</h2>
         <div class="w-100 text-center mt-3 p-0" id="genres_chart"></div>
       </div>
@@ -35,9 +63,35 @@
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
   <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
   <script>
     renderArtistsAlbums()
     renderGenres()
+
+    document.getElementById('pills-artists').addEventListener('click', () => {
+      const container = document.getElementById('artists_container');
+      container.classList.add('row-show');
+      document.getElementById('albums_container').classList.remove('row-show');
+      document.getElementById('genres_container').classList.remove('row-show');
+      console.log("click");
+    });
+
+    document.getElementById('pills-albums').addEventListener('click', () => {
+      const container = document.getElementById('albums_container');
+      container.classList.add('row-show');
+      document.getElementById('artists_container').classList.remove('row-show');
+      document.getElementById('genres_container').classList.remove('row-show');
+      console.log("click");
+    });
+
+    document.getElementById('pills-genres').addEventListener('click', () => {
+      const container = document.getElementById('genres_container');
+      container.classList.add('row-show');
+      document.getElementById('artists_container').classList.remove('row-show');
+      document.getElementById('albums_container').classList.remove('row-show');
+      console.log("click");
+    });
   </script>
 </body>
 </html>
