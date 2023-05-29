@@ -12,7 +12,7 @@ function loginWithSpotify(){
 
 function handleCallback() {
     const url = window.location.href;
-    const params = new URLSearchParams(url.split('?')[1]);
+    const params = new URLSearchParams(url.split('#')[1]);
     const token = params.get('access_token');
     if(token){
         sessionStorage.removeItem('access_token')
