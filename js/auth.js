@@ -3,7 +3,7 @@ function loginWithSpotify(){
     const redirectUri = "https://bubblify.github.io/auth.html";
     const scopes = ['user-top-read'];
     const authorizeUrl = 'https://accounts.spotify.com/authorize' +
-        '?response_type=code' +
+        '?response_type=token' +
         '&client_id=' + encodeURIComponent(clientId) +
         '&scope=' + encodeURIComponent(scopes.join(' ')) +
         '&redirect_uri=' + encodeURIComponent(redirectUri);
@@ -13,69 +13,14 @@ function loginWithSpotify(){
 function handleCallback() {
     const url = window.location.href;
     const params = new URLSearchParams(url.split('?')[1]);
-    const code = params.get('code');
-    if(code){
-        getAccessToken(code)
+    const token = params.get('access_token');
+    if(token){
+        sessionStorage.removeItem('access_token')
+        sessionStorage.setItem('access_token',token)
+        window.location.href = "main.html";
     }else{
         window.location.href = "index.html";
     }
-}
-
-function getAccessToken(code){
-    const url = 'https://accounts.spotify.com/api/token';
-    const data = new URLSearchParams();
-    data.append('code', code);
-    data.append('redirect_uri', 'https://bubblify.github.io/auth.html');
-    data.append('grant_type', 'authorization_code');
-
-    const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + 'NDllZTcyOWQ1MWRmNDc2Yjg5Y2NiM2FlOTczMGY0NDM6MWM1NWM5ZWM5Njk4NGRiMTk4MTViOTljODM2YjI0YjE='
-    };
-
-    fetch(url, {
-        method: 'POST',
-        body: data.toString(),
-        headers: headers
-    })
-    .then(response => response.json())
-    .then(data => {
-        sessionStorage.removeItem('access_token')
-        sessionStorage.removeItem('refresh_token')
-        sessionStorage.setItem('access_token',data.access_token)
-        sessionStorage.setItem('refresh_token',data.refresh_token)
-        window.location.href = "main.html";
-    })
-    .catch(error => {
-        alert(error)
-        window.location.href = "index.html";
-    });
-}
-
-async function refreshToken(refresh_token){
-    const url = 'https://accounts.spotify.com/api/token';
-    const data = new URLSearchParams();
-    data.append('grant_type', 'refresh_token');
-    data.append('refresh_token', refresh_token);
-
-    const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + 'NDllZTcyOWQ1MWRmNDc2Yjg5Y2NiM2FlOTczMGY0NDM6MWM1NWM5ZWM5Njk4NGRiMTk4MTViOTljODM2YjI0YjE='
-    };
-    fetch(url, {
-        method: 'POST',
-        body: data.toString(),
-        headers: headers
-    })
-    .then(response => response.json())
-    .then(data => {
-        sessionStorage.setItem('accessToken',data.access_token)
-        window.location.href = "main.html";
-    })
-    .catch(error => {
-        alert(error)
-        window.location.href = "index.html";
-    });
 }
 
 async function checkAuthorized() {
@@ -98,7 +43,6 @@ async function checkAuthorized() {
 
 function logout(){
     sessionStorage.removeItem("access_token")
-    sessionStorage.removeItem("refresh_token")
     window.location.href = "index.html";
 }
   
