@@ -1,6 +1,6 @@
 function loginWithSpotify(){
     const clientId = "49ee729d51df476b89ccb3ae9730f443";
-    const redirectUri = "https://akinozgur.com/bubblify/auth.html";
+    const redirectUri = "https://bubblify.github.io/auth.html";
     const scopes = ['user-top-read'];
     const authorizeUrl = 'https://accounts.spotify.com/authorize' +
         '?response_type=code' +
@@ -25,7 +25,7 @@ function getAccessToken(code){
     const url = 'https://accounts.spotify.com/api/token';
     const data = new URLSearchParams();
     data.append('code', code);
-    data.append('redirect_uri', 'https://akinozgur.com/bubblify/auth.html');
+    data.append('redirect_uri', 'https://bubblify.github.io/auth.html');
     data.append('grant_type', 'authorization_code');
 
     const headers = {
