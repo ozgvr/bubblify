@@ -24,63 +24,109 @@ async function getUserTop(access_token, type) {
     }
 
     const data = await response.json();
+
+    if (type === "tracks") {
+      const ids = [...new Set(data.items.map(item => item.artists[0].id))].join(',');
+
+      const imagesresponse = await fetch(
+        `https://api.spotify.com/v1/artists?ids=${ids}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + access_token,
+          },
+        }
+      );
+
+      const imagesData = await imagesresponse.json();
+      const imageUrls = imagesData.artists.reduce((acc, item) => {
+        acc[item.id] = item.images[1].url;
+        return acc;
+      }, {});
+
+      data.items.forEach(item => {
+        const artistId = item.artists[0].id;
+        if (imageUrls.hasOwnProperty(artistId)) {
+          item.artists[0].img = imageUrls[artistId];
+        }
+      });
+    }
     return data;
   } catch (error) {
-    console.log("Error:", error);
+    alert("Error:", error);
     return null;
   }
 }
 
-function parseArtists(data) {
-    var artists = {};
-    var results = [];
-  
-    data.items.forEach(item => {
-      var artist = item.artists[0].name;
-      if (artists.hasOwnProperty(artist)) {
-        artists[artist]++;
-      } else {
-        artists[artist] = 1;
-      }
-    });
-  
-    for (let artist in artists) {
-      results.push({ name: artist, value: artists[artist] });
+
+function parseArtistsAlbums(data) {
+  const artists = {};
+  const albums = {};
+  const ids = [];
+
+  for (const item of data.items) {
+    const artist = item.artists[0].name;
+    const id = item.artists[0].id;
+    const img = item.artists[0].img;
+    const album = item.album.name;
+    const album_img = item.album.images[1].url;
+
+    if (artists[artist]) {
+      artists[artist].value++;
+    } else {
+      artists[artist] = { name: artist, value: 1, id: id, img: img};
+      ids.push(id);
     }
-  
-    return results;
+
+    if (albums.hasOwnProperty(album)) {
+      albums[album].value++;
+    } else {
+      albums[album] = { name: album, value: 1, img: album_img };
+    }
   }
 
-  function parseGenres(data) {
-    const artists = data.items;
-    const genreCounts = {};
-  
-    for (const artist of artists) {
-      const genres = artist.genres;
-      for (const genre of genres) {
-        if (genreCounts.hasOwnProperty(genre)) {
-          genreCounts[genre]++;
-        } else {
-          genreCounts[genre] = 1;
-        }
-      }
+  return {artists: Object.values(artists), albums: Object.values(albums)};
+}
+
+function parseGenres(data) {
+  const genreCounts = {};
+
+  for (const artist of data.items) {
+    for (const genre of artist.genres) {
+      genreCounts[genre] = (genreCounts[genre] || 0) + 1;
     }
+  }
+
+  const result = Object.entries(genreCounts)
+    .filter(([genre, count]) => count > 1)
+    .map(([genre, count]) => ({ name: genre, value: count }));
+
+  return result;
+}
+
   
-    const result = [];
-    for (const genre in genreCounts) {
-      if (genreCounts[genre] > 1) {
-        result.push({ name: genre, value: genreCounts[genre] });
-      }
-    }
-  
-    return result;
+
+  async function renderArtistsAlbums() {
+    const token = sessionStorage.getItem('access_token');
+    const data = await getUserTop(token, 'tracks');
+    const { artists, albums } = parseArtistsAlbums(data);
+
+    renderBubbleChart(artists, '#artists_chart');
+    renderBubbleChart(albums, '#albums_chart');
+  }
+
+  async function renderGenres() {
+    const token = sessionStorage.getItem('access_token');
+    const data = await getUserTop(token, 'artists');
+    const parsedData = parseGenres(data);
+    renderBubbleChart(parsedData, '#genres_chart');
   }
 
   function renderBubbleChart(data, container_id) {
     const container = d3.select(container_id);
     const width = container.node().getBoundingClientRect().width;
   
-    const height = Math.min(800, window.innerHeight - container.node().getBoundingClientRect().top - 100);
+    const height = Math.min(800, window.innerHeight);
   
     const svg = container.append('svg').attr('width', '100%').attr('height', height);
   
@@ -106,22 +152,22 @@ function parseArtists(data) {
     node
       .append('circle')
       .attr('r', 0)
-      .style('fill', () => getNextColor())
-      .transition()
-      .duration(800)
-      .delay(() => Math.random() * 1000)
+      .style('fill', (d) => d.data.img ? getNextColor(false) : getNextColor())
       .attr('r', (d) => d.r);
   
     const textContainer = node
       .append('g')
       .attr('transform', (d) => `translate(${-d.r},${-d.r})`);
   
-      const foreignObject = textContainer
-      .append('foreignObject')
-      .style('overflow', 'visible')
-      .attr('width', (d) => 2 * d.r)
-      .attr('height', (d) => 2 * d.r)
-      .style('pointer-events', 'none');
+    const foreignObject = textContainer
+    .append('foreignObject')
+    .attr('width', (d) => 2 * d.r)
+    .attr('height', (d) => 2 * d.r)
+    .style('pointer-events', 'none')
+    .attr('class', (d) => d.data.img ? "image-bubble" : '')
+    .style('background-color', (d) => d.data.img ? getNextColor() : "transparent")
+    .style('background-image', (d) => d.data.img ? `url(${d.data.img})` : 'none')
+    .style('background-blend-mode', 'multiply');
     
     const div = foreignObject
       .append('xhtml:div')
@@ -130,36 +176,20 @@ function parseArtists(data) {
     
     div
       .append('a')
-      .style('opacity', '0')
+      .style('opacity', '1')
       .style('font-size', (d) => getBubbleTextSize(d.r))
-      .text((d) => d.data.name)
-      .transition()
-      .duration(400)
-      .delay(1500)
-      .style('opacity', '1');
-    
-    function getNextColor() {
-      const color = colors[colorIndex];
-      colorIndex = (colorIndex + 1) % colors.length;
-      return color;
-    }
+      .text((d) => d.data.name.length > 20 ? d.data.name.slice(0,20) + "..." : d.data.name);
+
+      function getNextColor(increaseIndex = true) {
+        const color = colors[colorIndex];
+        if (increaseIndex) {
+          colorIndex = (colorIndex + 1) % colors.length;
+        }
+        return color;
+      }
   
     function getBubbleTextSize(radius) {
-      const maxFontSize = (0.6 * (radius-3)) / Math.sqrt(2);  
+      const maxFontSize = (0.5 * (radius-3)) / Math.sqrt(2);  
       return maxFontSize + 'px';
     }
-  }
-
-  async function renderArtists() {
-    const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'tracks');
-    const parsedData = parseArtists(data);
-    renderBubbleChart(parsedData, '#artists_chart');
-  }
-
-  async function renderGenres() {
-    const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'artists');
-    const parsedData = parseGenres(data);
-    renderBubbleChart(parsedData, '#genres_chart');
   }
