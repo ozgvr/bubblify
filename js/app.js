@@ -1,8 +1,8 @@
-async function getUserTop(access_token, type) {
+async function getUserTop(access_token, type, time_range) {
   const content_type = ["artists", "tracks"].includes(type) ? type : null;
   const limit = 50;
   const offset = 0;
-  const time_range = "medium_term";
+  const range = ["short_term","medium_term","long_term"][time_range];
 
   if (!content_type) {
     return null;
@@ -10,7 +10,7 @@ async function getUserTop(access_token, type) {
 
   try {
     const response = await fetch(
-      `https://api.spotify.com/v1/me/top/${content_type}?limit=${limit}&offset=${offset}&time_range=${time_range}`,
+      `https://api.spotify.com/v1/me/top/${content_type}?limit=${limit}&offset=${offset}&time_range=${range}`,
       {
         method: "GET",
         headers: {
@@ -106,18 +106,18 @@ function parseGenres(data) {
 
   
 
-  async function renderArtistsAlbums() {
+  async function renderArtistsAlbums(time_range=1) {
     const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'tracks');
+    const data = await getUserTop(token, 'tracks', time_range);
     const { artists, albums } = parseArtistsAlbums(data);
 
     renderBubbleChart(artists, '#artists_chart');
     renderBubbleChart(albums, '#albums_chart');
   }
 
-  async function renderGenres() {
+  async function renderGenres(time_range=1) {
     const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'artists');
+    const data = await getUserTop(token, 'artists', time_range);
     const parsedData = parseGenres(data);
     renderBubbleChart(parsedData, '#genres_chart');
   }
