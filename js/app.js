@@ -126,7 +126,7 @@ function parseGenres(data) {
     const container = d3.select(container_id);
     const width = container.node().getBoundingClientRect().width;
   
-    const height = Math.min(800, window.innerHeight);
+    const height = Math.min(800, window.innerHeight-180);
   
     const svg = container.append('svg').attr('width', '100%').attr('height', height);
   
@@ -178,6 +178,7 @@ function parseGenres(data) {
       .append('a')
       .style('opacity', '1')
       .style('font-size', (d) => getBubbleTextSize(d.r))
+      .style('line-height', "1.1em")
       .text((d) => d.data.name.length > 20 ? d.data.name.slice(0,20) + "..." : d.data.name);
 
       function getNextColor(increaseIndex = true) {
@@ -189,7 +190,7 @@ function parseGenres(data) {
       }
   
     function getBubbleTextSize(radius) {
-      const maxFontSize = (0.5 * (radius-3)) / Math.sqrt(2);  
+      const maxFontSize = (0.6 * (radius-4)) / Math.sqrt(2);  
       return maxFontSize + 'px';
     }
   }
