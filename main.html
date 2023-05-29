@@ -27,11 +27,12 @@
     <div class="row justify-content-center w-100 m-0 p-0">
       <h1 class="display-3 text-white text-center mt-3 mb-0">Bubblify</h1>
 
-      <select class="form-select my-3" style="max-width:300px" data-bs-theme="dark">
-        <option value="1">Weekly</option>
-        <option selected="2">Monthly</option>
-        <option value="3">Yearly</option>
+      <select class="form-select my-3" id="timeRangeSelect" style="max-width:300px" data-bs-theme="dark">
+        <option value="0">Weekly</option>
+        <option value="1">Monthly</option>
+        <option value="2">Yearly</option>
       </select>
+
       <ul class="nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link pill active" id="pills-artists" data-bs-toggle="pill">Artists</button>
@@ -66,8 +67,22 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
   <script>
-    renderArtistsAlbums()
-    renderGenres()
+    const url = window.location.href;
+    const params = new URLSearchParams(url.split('?')[1]);
+    let time_range = params.get('time_range');
+
+    if (!time_range) {
+      time_range = 1
+    }
+    document.getElementById("timeRangeSelect").value = time_range;
+
+    timeRangeSelect.addEventListener("change", function() {
+      const selectedOption = this.value;
+      window.location.href = `loading.html?time_range=${selectedOption}`;
+    });
+
+    renderArtistsAlbums(time_range);
+    renderGenres(time_range);
 
     document.getElementById('pills-artists').addEventListener('click', () => {
       const container = document.getElementById('artists_container');
