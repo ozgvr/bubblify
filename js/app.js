@@ -141,7 +141,6 @@ function parseGenres(data) {
     
     if (sessionStorage.getItem("genres")){
       genres = await JSON.parse(sessionStorage.getItem("genres"));
-      console.log(genres)
     }else{
       const token = sessionStorage.getItem('access_token');
       const data = await getUserTop(token, 'artists', time_range);
@@ -188,7 +187,7 @@ function parseGenres(data) {
       .delay(() => Math.random() * 1000)
       .style('opacity',1)
   
-    const colors = ["#d00000","#ffba08","#3f88c5","#136f63","#032b43"];
+    const colors = ["#ffbe0b","#fb5607","#ff006e","#8338ec","#3a86ff"];
     let colorIndex = 0;
   
     node
@@ -220,7 +219,7 @@ function parseGenres(data) {
       .append('a')
       .style('font-size', (d) => getBubbleTextSize(d.r))
       .style('line-height', "1.1em")
-      .text((d) => d.data.name.length > 20 ? d.data.name.slice(0,20) + "..." : d.data.name);
+      .text((d) => d.data.name.length > 25 ? d.data.name.slice(0,25) + "..." : d.data.name);
 
       function getNextColor(increaseIndex = true) {
         const color = colors[colorIndex];
