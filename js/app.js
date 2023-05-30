@@ -97,13 +97,21 @@ function parseGenres(data) {
     }
   }
 
-  const result = Object.entries(genreCounts)
+  let result = Object.entries(genreCounts)
     .filter(([genre, count]) => count > 1)
     .map(([genre, count]) => ({ name: genre, value: count }));
 
+  if (result.length < 15) {
+    let remainingEntries = Object.entries(genreCounts)
+      .filter(([genre, count]) => count <= 1)
+      .slice(0, 15 - result.length)
+      .map(([genre, count]) => ({ name: genre, value: count }));
+
+    result = result.concat(remainingEntries);
+  }
+
   return result;
 }
-
   
 
   async function renderArtistsAlbums(time_range=1) {
