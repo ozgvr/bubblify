@@ -192,7 +192,7 @@ function parseGenres(data) {
   
     node
       .append('circle')
-      .style('fill', (d) => d.parent.color)
+      .style('fill', (d) => d.data.img ? "transparent" : d.color)
       .attr('r', (d) => d.r);
   
     const textContainer = node
