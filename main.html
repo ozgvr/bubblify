@@ -13,13 +13,16 @@
       color: transparent!important;
     }
     .row{
+      transition: opacity 0.8s ease-in-out;
       overflow:hidden;
     }
-    .row-hidden{
+    .chart{
       height:0px;
+      opacity:0;
     }
-    .row-show{
+    .chart-active{
       height:100%;
+      opacity: 1;
     }
   </style>
 </head>
@@ -47,15 +50,15 @@
 
       </ul>
 
-      <div class="row justify-content-center w-100 m-0 p-0 row-hidden row-show" id="artists_container">
+      <div class="row justify-content-center w-100 m-0 p-0 chart" id="artists_container">
         <h2 class="display-6 fs-3 text-white text-center mb-0 p-0">Top Artists</h2>
         <div class="w-100 text-center mt-3 p-0" id="artists_chart"></div>
       </div>
-      <div class="row justify-content-center w-100 m-0 p-0 row-hidden" id="albums_container">
+      <div class="row justify-content-center w-100 m-0 p-0 chart" id="albums_container">
         <h2 class="display-6 fs-3 text-white text-center mb-0">Top Albums</h2>
         <div class="w-100 text-center mt-3 p-0" id="albums_chart"></div> 
       </div>
-      <div class="row justify-content-center w-100 m-0 p-0 row-hidden" id="genres_container">
+      <div class="row justify-content-center w-100 m-0 p-0 chart" id="genres_container">
         <h2 class="display-6 fs-3 text-white text-center mb-0">Top Genres</h2>
         <div class="w-100 text-center mt-3 p-0" id="genres_chart"></div>
       </div>
@@ -86,24 +89,26 @@
 
     document.getElementById('pills-artists').addEventListener('click', () => {
       const container = document.getElementById('artists_container');
-      container.classList.add('row-show');
-      document.getElementById('albums_container').classList.remove('row-show');
-      document.getElementById('genres_container').classList.remove('row-show');
+      container.classList.add('chart-active');
+      document.getElementById('albums_container').classList.remove('chart-active');
+      document.getElementById('genres_container').classList.remove('chart-active');
     });
 
     document.getElementById('pills-albums').addEventListener('click', () => {
       const container = document.getElementById('albums_container');
-      container.classList.add('row-show');
-      document.getElementById('artists_container').classList.remove('row-show');
-      document.getElementById('genres_container').classList.remove('row-show');
+      container.classList.add('chart-active');
+      document.getElementById('artists_container').classList.remove('chart-active');
+      document.getElementById('genres_container').classList.remove('chart-active');
     });
 
     document.getElementById('pills-genres').addEventListener('click', () => {
       const container = document.getElementById('genres_container');
-      container.classList.add('row-show');
-      document.getElementById('artists_container').classList.remove('row-show');
-      document.getElementById('albums_container').classList.remove('row-show');
+      container.classList.add('chart-active');
+      document.getElementById('artists_container').classList.remove('chart-active');
+      document.getElementById('albums_container').classList.remove('chart-active');
     });
+
+    document.getElementById('pills-artists').click()
   </script>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
