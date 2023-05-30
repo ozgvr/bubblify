@@ -13,7 +13,7 @@
       color: transparent!important;
     }
     .row{
-      transition: opacity 0.8s ease-in-out;
+      transition: opacity 0.4s ease-in-out;
       overflow:hidden;
     }
     .chart{
@@ -84,28 +84,29 @@
       window.location.href = `loading.html?time_range=${selectedOption}`;
     });
 
-    renderArtistsAlbums(time_range);
-    renderGenres(time_range);
-
+    
     document.getElementById('pills-artists').addEventListener('click', () => {
       const container = document.getElementById('artists_container');
       container.classList.add('chart-active');
       document.getElementById('albums_container').classList.remove('chart-active');
       document.getElementById('genres_container').classList.remove('chart-active');
+      renderArtistsAlbums(time_range);
     });
-
+    
     document.getElementById('pills-albums').addEventListener('click', () => {
       const container = document.getElementById('albums_container');
       container.classList.add('chart-active');
       document.getElementById('artists_container').classList.remove('chart-active');
       document.getElementById('genres_container').classList.remove('chart-active');
+      renderArtistsAlbums(time_range);
     });
-
+    
     document.getElementById('pills-genres').addEventListener('click', () => {
       const container = document.getElementById('genres_container');
       container.classList.add('chart-active');
       document.getElementById('artists_container').classList.remove('chart-active');
       document.getElementById('albums_container').classList.remove('chart-active');
+      renderGenres(time_range);
     });
 
     document.getElementById('pills-artists').click()

@@ -115,19 +115,41 @@ function parseGenres(data) {
   
 
   async function renderArtistsAlbums(time_range=1) {
-    const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'tracks', time_range);
-    const { artists, albums } = parseArtistsAlbums(data);
+    let artists;
+    let albums;
+    
+    if (sessionStorage.getItem("artists") && sessionStorage.getItem("albums")){
+      artists = JSON.parse(sessionStorage.getItem("artists"));
+      albums = JSON.parse(sessionStorage.getItem("albums"));
+    }else{
+      const token = sessionStorage.getItem('access_token');
+      const data = await getUserTop(token, 'tracks', time_range);
+      const parsedData = parseArtistsAlbums(data);
+
+      artists = parsedData.artists;
+      albums = parsedData.albums;
+      sessionStorage.setItem("artists",JSON.stringify(artists));
+      sessionStorage.setItem("albums",JSON.stringify(albums));
+    }
 
     renderBubbleChart(artists, '#artists_chart');
     renderBubbleChart(albums, '#albums_chart');
   }
 
   async function renderGenres(time_range=1) {
-    const token = sessionStorage.getItem('access_token');
-    const data = await getUserTop(token, 'artists', time_range);
-    const parsedData = parseGenres(data);
-    renderBubbleChart(parsedData, '#genres_chart');
+    let genres;
+    
+    if (sessionStorage.getItem("genres")){
+      genres = await JSON.parse(sessionStorage.getItem("genres"));
+      console.log(genres)
+    }else{
+      const token = sessionStorage.getItem('access_token');
+      const data = await getUserTop(token, 'artists', time_range);
+      genres = parseGenres(data);
+      sessionStorage.setItem("genres",JSON.stringify(genres))
+    }
+
+    renderBubbleChart(genres, '#genres_chart');
   }
 
   function renderBubbleChart(data, container_id) {
@@ -135,6 +157,9 @@ function parseGenres(data) {
     const width = container.node().getBoundingClientRect().width;
     const height = Math.min(768, container.node().getBoundingClientRect().width);
     
+    container.select("svg").remove();
+
+
     const svg = container
       .append('svg')
       .attr('width', '100%')
@@ -155,8 +180,15 @@ function parseGenres(data) {
       .append('g')
       .attr('class', 'node')
       .attr('transform', (d) => 'translate(' + d.x + ',' + d.y + ')');
+
+    node
+      .style('opacity',0)
+      .transition()
+      .duration(1000)
+      .delay(() => Math.random() * 1000)
+      .style('opacity',1)
   
-    const colors = ["#363b74", "#673888", "#ef4f91", "#c79dd7", "#4d1b7b", "#005bb5"];
+    const colors = ["#d00000","#ffba08","#3f88c5","#136f63","#032b43"];
     let colorIndex = 0;
   
     node
