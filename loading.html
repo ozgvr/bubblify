@@ -33,6 +33,9 @@
       if (!time_range) {
         window.location.href = "main.html";
       }else{
+        sessionStorage.removeItem("artists");
+        sessionStorage.removeItem("albums");
+        sessionStorage.removeItem("genres");
         window.location.href = `main.html?time_range=${time_range}`;
       }
     }
