@@ -4,6 +4,7 @@
   <title>My Bubblify</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <style>
     .image-bubble{
       background-position: center;
@@ -25,15 +26,15 @@
 <body class="bg-transparent" onload="checkAuthorized()">
   <div class="container-fluid p-0">
     <div class="row justify-content-center w-100 m-0 p-0">
-      <h1 class="display-3 text-white text-center mt-3 mb-0">Bubblify</h1>
+      <h1 class="display-3 text-white text-center mt-3 mb-0" data-aos="fade-down" data-aos-delay="0">Bubblify</h1>
 
-      <select class="form-select my-3" id="timeRangeSelect" style="max-width:300px" data-bs-theme="dark">
+      <select class="form-select my-3" id="timeRangeSelect" style="max-width:300px" data-bs-theme="dark" data-aos="fade-down" data-aos-delay="100">
         <option value="0">Weekly</option>
         <option value="1">Monthly</option>
         <option value="2">Yearly</option>
       </select>
 
-      <ul class="nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist">
+      <ul class="nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist" data-aos="fade-down" data-aos-delay="200">
         <li class="nav-item" role="presentation">
           <button class="nav-link pill active" id="pills-artists" data-bs-toggle="pill">Artists</button>
         </li>
@@ -58,7 +59,7 @@
         <h2 class="display-6 fs-3 text-white text-center mb-0">Top Genres</h2>
         <div class="w-100 text-center mt-3 p-0" id="genres_chart"></div>
       </div>
-      <h2 class="display-6 fs-5 text-white-50 text-center">bubblify.github.io</h2>
+      <h2 class="display-6 fs-5 text-white-50 text-center" data-aos="fade-up" data-aos-delay="400">bubblify.github.io</h2>
     </div>
   </div>
   <script src="js/auth.js"></script>
@@ -103,6 +104,10 @@
       document.getElementById('artists_container').classList.remove('row-show');
       document.getElementById('albums_container').classList.remove('row-show');
     });
+  </script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
   </script>
 </body>
 </html>
