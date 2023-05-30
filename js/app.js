@@ -155,6 +155,8 @@ function parseGenres(data) {
     const container = d3.select(container_id);
     const width = container.node().getBoundingClientRect().width;
     const height = Math.min(768, container.node().getBoundingClientRect().width);
+    const colors = ["#ffbe0b","#fb5607","#ff006e","#8338ec","#3a86ff"];
+    let colorIndex = 0;
     
     container.select("svg").remove();
 
@@ -181,18 +183,16 @@ function parseGenres(data) {
       .attr('transform', (d) => 'translate(' + d.x + ',' + d.y + ')');
 
     node
+      .attr('id', (d)=>d.color = getNextColor())
       .style('opacity',0)
       .transition()
       .duration(1000)
       .delay(() => Math.random() * 1000)
       .style('opacity',1)
   
-    const colors = ["#ffbe0b","#fb5607","#ff006e","#8338ec","#3a86ff"];
-    let colorIndex = 0;
-  
     node
       .append('circle')
-      .style('fill', (d) => d.data.img ? getNextColor(false) : getNextColor())
+      .style('fill', (d) => d.parent.color)
       .attr('r', (d) => d.r);
   
     const textContainer = node
@@ -200,15 +200,15 @@ function parseGenres(data) {
       .attr('transform', (d) => `translate(${-d.r},${-d.r})`);
   
     const foreignObject = textContainer
-    .append('foreignObject')
-    .attr('width', (d) => 2 * d.r)
-    .attr('height', (d) => 2 * d.r)
-    .style('pointer-events', 'none')
-    .style('overflow','visible')
-    .attr('class', (d) => d.data.img ? "image-bubble" : '')
-    .style('background-color', (d) => d.data.img ? getNextColor() : "transparent")
-    .style('background-image', (d) => d.data.img ? `url(${d.data.img})` : 'none')
-    .style('background-blend-mode', 'multiply');
+      .append('foreignObject')
+      .attr('width', (d) => 2 * d.r)
+      .attr('height', (d) => 2 * d.r)
+      .style('pointer-events', 'none')
+      .style('overflow','visible')
+      .attr('class', (d) => d.data.img ? "image-bubble" : '')
+      .style('background-color', (d) => d.data.img ? d.color : "transparent")
+      .style('background-image', (d) => d.data.img ? `url(${d.data.img})` : 'none')
+      .style('background-blend-mode', 'multiply');
     
     const div = foreignObject
       .append('xhtml:div')
