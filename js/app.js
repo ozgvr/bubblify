@@ -69,7 +69,6 @@ function parseArtistsAlbums(data) {
     const id = item.artists[0].id;
     const img = item.artists[0].img;
     const album = item.album.name;
-    const album_img = item.album.images[1].url;
 
     if (artists[artist]) {
       artists[artist].value++;
@@ -81,7 +80,7 @@ function parseArtistsAlbums(data) {
     if (albums.hasOwnProperty(album)) {
       albums[album].value++;
     } else {
-      albums[album] = { name: album, value: 1, img: album_img };
+      albums[album] = { name: album, value: 1 };
     }
   }
 
