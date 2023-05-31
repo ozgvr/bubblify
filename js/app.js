@@ -206,7 +206,7 @@ function parseGenres(data) {
       .style('overflow','visible')
       .attr('class', (d) => d.data.img ? "image-bubble" : '')
       .style('background-color', (d) => d.data.img ? d.color : "transparent")
-      .style('background-image', (d) => d.data.img ? `url(${d.data.img})` : 'none')
+      .style('background-image', (d) => !d.data.img ? `url(${d.data.img})` : 'none')
       .style('background-blend-mode', 'multiply');
     
     const div = foreignObject
