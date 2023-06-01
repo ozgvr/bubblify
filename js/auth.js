@@ -43,6 +43,9 @@ async function checkAuthorized() {
 }
 
 function logout(){
+    sessionStorage.removeItem("albums")
+    sessionStorage.removeItem("artists")
+    sessionStorage.removeItem("genres")
     sessionStorage.removeItem("access_token")
     window.location.href = "index.html";
 }
