@@ -11,12 +11,16 @@
     * {
      font-family: 'Inter Tight', sans-serif;
     }
-    .image-bubble{
-      background-position: center;
-      background-size: cover;
-      border-radius: 99999px;
-      color: transparent!important;
+    circle{
+      transition: all 0.1s ease;
     }
+    .node:hover circle{
+      transform: scale(1.1);
+    }
+    .node:hover > g > foreignObject > div > a{
+      transform: scale(1.1);
+    }
+
     .row{
       transition: opacity 0.4s ease-in-out;
       overflow:hidden;
