@@ -64,23 +64,25 @@ function parseArtistsAlbums(data) {
   const albums = {};
   const ids = [];
 
+  console.log(data)
   for (const item of data.items) {
     const artist = item.artists[0].name;
     const id = item.artists[0].id;
-    const img = item.artists[0].img;
     const album = item.album.name;
+    const artist_url = item.artists[0].external_urls.spotify;
+    const album_url = item.album.external_urls.spotify;
 
     if (artists[artist]) {
       artists[artist].value++;
     } else {
-      artists[artist] = { name: artist, value: 1, id: id, img: img};
+      artists[artist] = { name: artist, value: 1, id: id, href: artist_url };
       ids.push(id);
     }
 
     if (albums.hasOwnProperty(album)) {
       albums[album].value++;
     } else {
-      albums[album] = { name: album, value: 1 };
+      albums[album] = { name: album, value: 1, href: album_url };
     }
   }
 
@@ -191,7 +193,7 @@ function parseGenres(data) {
   
     node
       .append('circle')
-      .style('fill', (d) => d.data.img ? "transparent" : d.color)
+      .style('fill', (d) => d.color)
       .attr('r', (d) => d.r);
   
     const textContainer = node
@@ -202,12 +204,7 @@ function parseGenres(data) {
       .append('foreignObject')
       .attr('width', (d) => 2 * d.r)
       .attr('height', (d) => 2 * d.r)
-      .style('pointer-events', 'none')
-      .style('overflow','visible')
-      .attr('class', (d) => d.data.img ? "image-bubble" : '')
-      .style('background-color', (d) => d.data.img ? d.color : "transparent")
-      .style('background-image', (d) => !d.data.img ? `url(${d.data.img})` : 'none')
-      .style('background-blend-mode', 'multiply');
+      .style('overflow','visible');
     
     const div = foreignObject
       .append('xhtml:div')
@@ -218,6 +215,10 @@ function parseGenres(data) {
       .append('a')
       .style('font-size', (d) => getBubbleTextSize(d.r))
       .style('line-height', "1.1em")
+      .style('transition', "all 0.1s ease")
+      .style('color','white')
+      .style('text-decoration','none')
+      .attr('href', (d) => d.data.href ? d.data.href : "")
       .text((d) => d.data.name.length > 25 ? d.data.name.slice(0,25) + "..." : d.data.name);
 
       function getNextColor(increaseIndex = true) {
