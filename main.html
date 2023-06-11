@@ -49,43 +49,45 @@
 <body class="bg-transparent" onload="checkAuthorized()">
   <button style="position: absolute;" class="btn btn-outline-light float-end m-3 z-1" onclick="logout()" data-aos="fade-down" data-aos-delay="0"><i class="bi bi-box-arrow-left"></i></button>
   <div class="container-fluid p-0">
-    <div class="row justify-content-center w-100 m-0 p-0">
-      <h1 class="display-3 text-white text-center mt-3 mb-0" data-aos="fade-down" data-aos-delay="0">Bubblify</h1>
-
-      <select class="form-select my-3" id="timeRangeSelect" style="max-width:300px" data-bs-theme="dark" data-aos="fade-down" data-aos-delay="100">
-        <option value="0">Weekly</option>
-        <option value="1">Monthly</option>
-        <option value="2">Yearly</option>
-      </select>
-
-      <ul class="nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist" data-aos="fade-down" data-aos-delay="200">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link pill active" id="pills-artists" data-bs-toggle="pill">Artists</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link pill" id="pills-albums" data-bs-toggle="pill">Albums</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link pill" id="pills-genres" data-bs-toggle="pill">Genres</button>
-        </li>
-
-      </ul>
-
-      <div class="row justify-content-center w-100 m-0 p-0 chart" id="artists_container">
-        <h2 class="display-6 fs-3 text-white text-center mb-0 p-0">Top Artists</h2>
-        <div class="w-100 text-center mt-3 p-0" id="artists_chart"></div>
-      </div>
-      <div class="row justify-content-center w-100 m-0 p-0 chart" id="albums_container">
-        <h2 class="display-6 fs-3 text-white text-center mb-0">Top Albums</h2>
-        <div class="w-100 text-center mt-3 p-0" id="albums_chart"></div> 
-      </div>
-      <div class="row justify-content-center w-100 m-0 p-0 chart" id="genres_container">
-        <h2 class="display-6 fs-3 text-white text-center mb-0">Top Genres</h2>
-        <div class="w-100 text-center mt-3 p-0" id="genres_chart"></div>
-      </div>
-      <h2 class="display-6 fs-5 mt-5 text-white-50 text-center">Powered by</h2>
-      <img class="text-center mt-0 mb-2" style="height:70px;width: auto;" src="Spotify_Logo_RGB_White.png"/>
-      <h2 class="display-6 fs-5 text-white-50 text-center">bubblify.github.io</h2>
+    <section>
+      <div class="row justify-content-center w-100 m-0 p-0">
+        <h1 class="display-3 text-white text-center mt-3 mb-0" data-aos="fade-down" data-aos-delay="0">Bubblify</h1>  
+        <select class="form-select my-3" id="timeRangeSelect" style="max-width:300px" data-bs-theme="dark" data-aos="fade-down" data-aos-delay="100">
+          <option value="0">Weekly</option>
+          <option value="1">Monthly</option>
+          <option value="2">Yearly</option>
+        </select>      
+        <ul class="nav nav-pills my-3 justify-content-center" id="pills-tab" role="tablist" data-aos="fade-down" data-aos-delay="200">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link pill active" id="pills-artists" data-bs-toggle="pill">Artists</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link pill" id="pills-albums" data-bs-toggle="pill">Albums</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link pill" id="pills-genres" data-bs-toggle="pill">Genres</button>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <div class="row justify-content-center w-100 m-0 p-0 chart" id="artists_container">
+          <h2 class="display-6 fs-3 text-white text-center mb-0 p-0">Top Artists</h2>
+          <div class="w-100 text-center mt-3 p-0" id="artists_chart"></div>
+        </div>
+        <div class="row justify-content-center w-100 m-0 p-0 chart" id="albums_container">
+          <h2 class="display-6 fs-3 text-white text-center mb-0">Top Albums</h2>
+          <div class="w-100 text-center mt-3 p-0" id="albums_chart"></div> 
+        </div>
+        <div class="row justify-content-center w-100 m-0 p-0 chart" id="genres_container">
+          <h2 class="display-6 fs-3 text-white text-center mb-0">Top Genres</h2>
+          <div class="w-100 text-center mt-3 p-0" id="genres_chart"></div>
+        </div>
+      </section>
+      <section>
+        <h2 class="display-6 fs-5 mt-5 text-white-50 text-center">Powered by</h2>
+        <img class="text-center mt-0 mb-2" style="height:70px;width: auto;" src="Spotify_Logo_RGB_White.png"/>
+        <h2 class="display-6 fs-5 text-white-50 text-center">bubblify.github.io</h2>
+      </section>
     </div>
   </div>
   <script src="js/auth.js"></script>
