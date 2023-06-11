@@ -64,7 +64,6 @@ function parseArtistsAlbums(data) {
   const albums = {};
   const ids = [];
 
-  console.log(data)
   for (const item of data.items) {
     const artist = item.artists[0].name;
     const id = item.artists[0].id;
