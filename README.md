@@ -19,5 +19,5 @@ Visualize your top albums in bubbles. First, top 50 artists of the user in selec
 # <img width="500" alt="image" src="https://github.com/ozgvr/bubblify/assets/61429082/ac87a3ea-84dc-4fdd-968a-886090dcb564">
 
 ## Select different time frames
-Get data for multiple time frames. Spotify names these time frames as "short-term", "medium-term" and "long-term". Which are corresponding to "weekly", "monthly" and "yearly" in the application.
+Get data for multiple time frames. Spotify names these time frames as "short-term", "medium-term" and "long-term". Which are corresponding to "1 months", "6 months" and "all time" in the application.
 # <img width="500" alt="image" src="https://github.com/ozgvr/bubblify/assets/61429082/5ec0704e-47f3-4989-86be-6182f84876c9">
