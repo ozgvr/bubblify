@@ -85,15 +85,18 @@
     const url = window.location.href;
     const params = new URLSearchParams(url.split('?')[1]);
     let time_range = params.get('time_range');
-
+    
     if (!time_range) {
       time_range = 1
     }
     document.getElementById("timeRangeSelect").value = time_range;
-
+    
     timeRangeSelect.addEventListener("change", function() {
       const selectedOption = this.value;
-      window.location.href = `loading.html?time_range=${selectedOption}`;
+      sessionStorage.removeItem("artists");
+      sessionStorage.removeItem("albums");
+      sessionStorage.removeItem("genres");
+      window.location.href = `main.html?time_range=${selectedOption}`;
     });
 
     
